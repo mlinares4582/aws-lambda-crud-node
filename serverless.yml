@@ -1,0 +1,69 @@
+org: mglinares
+app: aws-lambda-crud-node
+service: aws-lambda-crud-node
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  region: us-east-1
+  iamRoleStatements:
+    - Effect: Allow
+      Action: 
+        - dynamodb:*
+      Resource:
+        - arn:aws:dynamodb:us-east-1:239451805807:table/NarutoTable
+
+functions:
+  hello:
+    handler: src/handler.hello
+    events:
+      - httpApi:
+          path: /
+          method: get
+
+  createShinobi: 
+    handler: src/addShinobi.addShinobi
+    events:
+    - httpApi:
+        path: /naruto
+        method: post
+  getAllShinobi: 
+    handler: src/getAllShinobi.getAllShinobi
+    events:
+    - httpApi:
+        path: /naruto
+        method: get
+  getShinobi:
+    handler: src/getShinobi.getShinobi
+    events:
+      - httpApi:
+          path: /naruto/{id}
+          method: get 
+  updateShinobi:
+    handler: src/updateShinobi.updateShinobi
+    events:
+      - httpApi:
+          path: /naruto/{id}
+          method: put
+  deleteShinobi:
+    handler: src/deleteShinobi.deleteShinobi
+    events:
+      - httpApi:
+          path: /naruto/{id}
+          method: delete
+      
+
+resources: 
+  Resources:
+    NarutoTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: NarutoTable
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
